@@ -1,0 +1,11 @@
+\.*
+*.json
+*.JPG
+*.png
+*.bmp
+!.profile
+!.gitignore
+icon*
+__pycache__*
+old*
+buffer.txt

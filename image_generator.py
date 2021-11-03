@@ -24,12 +24,11 @@ def quantize(image):
     return image_7color
 
 def bg_draw(config):
-    if config.bg_src == None:
-        img = Image.new('RGBA', (config.width, config.height), 'white')
-    elif config.bg_src == 'Google_Photo':
+    if config.bg_src == 'Google_Photo':
         img = Image.open('background.bmp')
     else:
-        img = Image.open(config.background)
+        img = Image.new('RGBA', (config.width, config.height), 'white')
+
 
     if config.bg_fmt == 'full_screen':
         wc = img.width / 2
