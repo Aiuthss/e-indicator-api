@@ -20,12 +20,26 @@ class Weather:
                 weatherCodes = i['weatherCodes']
                 break
         self.weatherCodes = dict(zip(timepoint, weatherCodes))
-        
+
+        self.pops = {}
         timepoint = forecast_data[0]['timeSeries'][1]['timeDefines']
+        timepoint = [i[0:10] for i in timepoint]
         for i in forecast_data[0]['timeSeries'][1]['areas']:
             if i['area']['code'] == config.area_code:
                 pops = i['pops']
-        self.pops = dict(zip(timepoint, pops))
+        for time, pop in zip(timepoint, pops):
+            if time not in self.pops.keys():
+                self.pops[time] = []
+            self.pops[time].append(pop)
+
+        timepoint = forecast_data[1]['timeSeries'][0]['timeDefines']
+        timepoint = [i[0:10] for i in timepoint]
+        for i in forecast_data[1]['timeSeries'][0]['areas']:
+            if i['area']['code'] == config.area_code:
+                pops = i['pops']
+        for time, pop in zip(timepoint, pops):
+            if time not in self.pops.keys():
+                self.pops[time] = pop
         
         timepoint = forecast_data[1]['timeSeries'][1]['timeDefines']
         temp = zip(forecast_data[1]['timeSeries'][1]['areas'][0]['tempsMin'], forecast_data[1]['timeSeries'][1]['areas'][0]['tempsMax'])
@@ -51,8 +65,14 @@ class Weather:
 
         x_pops = config.width / len(self.weatherCodes) / 2
         y_pops = y_stroke + 10
+        font_pop = ImageFont.truetype(config.font, int(config.fontsize*0.9))
         for i in list(self.pops.values())[0:period]:
-            draw.text((x_pops, y_pops), i + ' %', fill='black', anchor = 'mt', font=font, stroke_width=1, stroke_fill='white')
+            if type(i) is list:
+                text = '/'.join(['-']*(4-len(i)) + i)
+            else:
+                text = i
+            text = text + '%'
+            draw.text((x_pops, y_pops), text, fill='black', anchor = 'mt', font=font_pop, stroke_width=1, stroke_fill='white')
             x_pops += x_stroke
 
         x_temp = config.width / len(self.weatherCodes) / 2
