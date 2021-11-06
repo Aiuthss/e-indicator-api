@@ -15,6 +15,8 @@ class Config:
                 self.calendar = Calendarconfig(config_file)
             elif i == 'weather':
                 self.weather = Weatherconfig(config_file)
+            elif i == 'tasks':
+                self.tasks = Tasksconfig(config_file)
 
 class Generalconfig:
     width = 600
@@ -44,7 +46,7 @@ class Generalconfig:
             pass
 
 class Googleconfig:
-    SCOPES = ['https://www.googleapis.com/auth/calendar.readonly', 'https://www.googleapis.com/auth/photoslibrary.readonly']
+    SCOPES = ['https://www.googleapis.com/auth/calendar.readonly', 'https://www.googleapis.com/auth/photoslibrary.readonly', 'https://www.googleapis.com/auth/tasks.readonly']
     def __init__(self):
         self.creds = None
         if os.path.exists('token.json'):
@@ -84,7 +86,7 @@ class Calendarconfig:
             self.fontsize = int(c['calendar'].get('fontsize', self.fontsize))
             self.alpha = int(c['calendar'].get('alpha', self.alpha))
         except:
-            print('No/Invalid config file')
+            print('No/Invalid calendar config')
             sys.exit()
 
 class Weatherconfig:
@@ -121,5 +123,34 @@ class Weatherconfig:
             self.alpha = int(c['weather'].get('alpha', self.alpha))
 
         except:
-            print('No/Invalid config file')
+            print('No/Invalid weather config')
+            sys.exit()
+
+class Tasksconfig:
+    tasklistIds = []
+    x = 0
+    y = 150
+    width = 200
+    height = 298
+    max_tasks = 5
+    font = 'NotoSansJP-Black.otf'
+    fontsize = 15
+    alpha = 150
+
+    def __init__(self, config_file):
+        try:
+            with open(config_file, 'r', encoding='UTF-8') as f:
+                t = json.load(f)
+            tasks = t['tasks']
+            self.tasklistIds = tasks['tasklistIds']
+            self.x = int(tasks.get('x', self.x))
+            self.y = int(tasks.get('y', self.y))
+            self.width = int(tasks.get('width', self.width))
+            self.height = int(tasks.get('height', self.height))
+            self.max_tasks = int(tasks.get('max_tasks', self.max_tasks))
+            self.font = tasks.get('font', self.font)
+            self.fontsize = int(tasks.get('fontsize', self.fontsize))
+            self.alpha = int(tasks.get('alpha', self.alpha))
+        except:
+            print('No/Invalid task config')
             sys.exit()

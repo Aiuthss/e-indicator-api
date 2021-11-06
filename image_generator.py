@@ -1,5 +1,6 @@
 import calendar_image
 import weather_image
+import tasks_image
 import config
 import random
 import requests
@@ -61,23 +62,6 @@ def bg_draw(config):
         img = img.resize((config.width, config.height))
     return img
 
-def run(config_file):
-    conf = config.Config(config_file)
-    if conf.general.bg_src == 'Google_Photo':
-        save_bg_img(conf.google.creds, albumIds=conf.general.albumIds, baseUrl=conf.general.baseUrl)
-
-    img = bg_draw(conf.general)
-
-    for i in conf.general.contents:
-        if i == 'weather':
-            weather_img = weather_image.run(conf.weather)
-            img.paste(weather_img, (conf.weather.x, conf.weather.y), weather_img)
-        elif i == 'calendar':
-            calendar_img = calendar_image.run(conf.calendar, conf.google.creds)
-            img.paste(calendar_img, (conf.calendar.x, conf.calendar.y), calendar_img)
-    img = quantize(img)
-    return img
-
 def save_bg_img(creds, albumIds=None, baseUrl=None):
     service = build('photoslibrary', 'v1', credentials=creds, static_discovery=False)
 
@@ -97,3 +81,23 @@ def save_bg_img(creds, albumIds=None, baseUrl=None):
     response = requests.get(baseUrl)
     with open('background.bmp', 'wb') as f:
         f.write(response.content)
+
+def run(config_file):
+    conf = config.Config(config_file)
+    if conf.general.bg_src == 'Google_Photo':
+        save_bg_img(conf.google.creds, albumIds=conf.general.albumIds, baseUrl=conf.general.baseUrl)
+
+    img = bg_draw(conf.general)
+
+    for i in conf.general.contents:
+        if i == 'weather':
+            weather_img = weather_image.run(conf.weather)
+            img.paste(weather_img, (conf.weather.x, conf.weather.y), weather_img)
+        elif i == 'calendar':
+            calendar_img = calendar_image.run(conf.calendar, conf.google.creds)
+            img.paste(calendar_img, (conf.calendar.x, conf.calendar.y), calendar_img)
+        elif i == 'tasks':
+            tasks_img = tasks_image.run(conf.tasks, conf.google.creds)
+            img.paste(tasks_img, (conf.tasks.x, conf.tasks.y), tasks_img)
+    img = quantize(img)
+    return img
