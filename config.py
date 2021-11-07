@@ -32,16 +32,16 @@ class Generalconfig:
     def __init__(self, config_file):
         try:
             with open(config_file, 'r', encoding='UTF-8') as f:
-                c = json.load(f)
-            self.width= int(c['general'].get('width', self.width))
-            self.height= int(c['general'].get('height', self.height))
-            self.background = c['general'].get('background', self.background)
-            self.bg_fmt = c['general'].get('bg_fmt', self.bg_fmt)
-            self.bg_color = c['general'].get('bg_color', self.bg_color)
-            self.bg_src = c['general'].get('bg_src', self.bg_src)
-            self.baseUrl = c['general'].get('baseUrl', self.baseUrl)
-            self.albumIds = c['general'].get('albumIds', self.albumIds)
-            self.contents = c['general'].get('contents', self.contents)
+                w = json.load(f)
+            self.width= int(w['general'].get('width', self.width))
+            self.height= int(w['general'].get('height', self.height))
+            self.background = w['general'].get('background', self.background)
+            self.bg_fmt = w['general'].get('bg_fmt', self.bg_fmt)
+            self.bg_color = w['general'].get('bg_color', self.bg_color)
+            self.bg_src = w['general'].get('bg_src', self.bg_src)
+            self.baseUrl = w['general'].get('baseUrl', self.baseUrl)
+            self.albumIds = w['general'].get('albumIds', self.albumIds)
+            self.contents = w['general'].get('contents', self.contents)
         except:
             pass
 
@@ -75,16 +75,16 @@ class Calendarconfig:
     def __init__(self, config_file):
         try:
             with open(config_file, 'r', encoding='UTF-8') as f:
-                c = json.load(f)
-            self.calendarIds = c['calendar']['calendarIds']
-            self.x = int(c['calendar'].get('x', self.x))
-            self.y = int(c['calendar'].get('y', self.y))
-            self.width = int(c['calendar'].get('width', self.width))
-            self.height = int(c['calendar'].get('height', self.height))
-            self.event_num = int(c['calendar'].get('event_num', self.event_num))
-            self.font = c['calendar'].get('font', self.font)
-            self.fontsize = int(c['calendar'].get('fontsize', self.fontsize))
-            self.alpha = int(c['calendar'].get('alpha', self.alpha))
+                w = json.load(f)
+            self.calendarIds = w['calendar']['calendarIds']
+            self.x = int(w['calendar'].get('x', self.x))
+            self.y = int(w['calendar'].get('y', self.y))
+            self.width = int(w['calendar'].get('width', self.width))
+            self.height = int(w['calendar'].get('height', self.height))
+            self.event_num = int(w['calendar'].get('event_num', self.event_num))
+            self.font = 'fonts/' + w['calendar'].get('font', self.font)
+            self.fontsize = int(w['calendar'].get('fontsize', self.fontsize))
+            self.alpha = int(w['calendar'].get('alpha', self.alpha))
         except:
             print('No/Invalid calendar config')
             sys.exit()
@@ -107,20 +107,21 @@ class Weatherconfig:
     def __init__(self,config_file):
         try:
             with open(config_file, 'r', encoding='UTF-8') as f:
-                c = json.load(f)
-            self.office = c['weather']['office']
-            self.office_code = c['weather']['office_code']
-            self.area = c['weather']['area']
-            self.area_code = c['weather']['area_code']
-            self.x = int(c['weather'].get('x', self.x))
-            self.y = int(c['weather'].get('y', self.y))
-            self.width= int(c['weather'].get('width', self.width))
-            self.height= int(c['weather'].get('height', self.height))
-            self.font = c['weather'].get('font', self.font)
-            self.fontsize= int(c['weather'].get('fontsize', self.fontsize))
-            self.icon_width= int(c['weather'].get('icon_width', self.icon_width))
-            self.icon_height= int(c['weather'].get('icon_height', self.icon_height))
-            self.alpha = int(c['weather'].get('alpha', self.alpha))
+                w = json.load(f)
+            weather = w['weather']
+            self.office = weather['office']
+            self.office_code = weather['office_code']
+            self.area = weather['area']
+            self.area_code = weather['area_code']
+            self.x = int(weather.get('x', self.x))
+            self.y = int(weather.get('y', self.y))
+            self.width= int(weather.get('width', self.width))
+            self.height= int(weather.get('height', self.height))
+            self.font = 'fonts/' + weather.get('font', self.font)
+            self.fontsize= int(weather.get('fontsize', self.fontsize))
+            self.icon_width= int(weather.get('icon_width', self.icon_width))
+            self.icon_height= int(weather.get('icon_height', self.icon_height))
+            self.alpha = int(weather.get('alpha', self.alpha))
 
         except:
             print('No/Invalid weather config')
@@ -148,7 +149,7 @@ class Tasksconfig:
             self.width = int(tasks.get('width', self.width))
             self.height = int(tasks.get('height', self.height))
             self.max_tasks = int(tasks.get('max_tasks', self.max_tasks))
-            self.font = tasks.get('font', self.font)
+            self.font = 'fonts/' + tasks.get('font', self.font)
             self.fontsize = int(tasks.get('fontsize', self.fontsize))
             self.alpha = int(tasks.get('alpha', self.alpha))
         except:
