@@ -1,9 +1,4 @@
-import os
-import json
 from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
 from PIL import Image, ImageDraw, ImageFont
 
 class Tasks:
@@ -16,7 +11,7 @@ class Tasks:
             result = self.service.tasklists().get(tasklist=tasklistId).execute()
             list_title = result.get('title', None)
             result = self.service.tasks().list(tasklist=tasklistId).execute()
-            tasks = result.get('items', None)
+            tasks = result.get('items', [])
             parents_list = [None]*30
             child_dict = {}
             for task in tasks:
