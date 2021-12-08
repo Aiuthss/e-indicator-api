@@ -3,7 +3,6 @@ import os
 from googleapiclient.discovery import build
 import datetime
 from PIL import Image, ImageDraw, ImageFont
-import calendar_variance
 import calendar
 
 class Calendar:
@@ -25,7 +24,11 @@ class Calendar:
 
     def collect_events_info(self, config):
         self.events_info = []
+        color_dict = self.service.colors().get().execute()
         for calendarId in config.calendarIds:
+            calendarList = self.service.calendarList().get(calendarId=calendarId).execute()
+            fg_caelndar = calendarList.get('foregroundColor', color_dict['calendar']['1']['foreground'])
+            bg_calendar = calendarList.get('backgroundColor', color_dict['calendar']['1']['background'])
             eventList = self.service.events().list(calendarId=calendarId, timeMax=self.timeMax, timeMin=self.timeMin, singleEvents=True, orderBy='startTime').execute()
             n_events = len(eventList["items"])
             events_info = []
@@ -42,11 +45,21 @@ class Calendar:
                     start = datetime.datetime.strptime(start['dateTime'][:-6], '%Y-%m-%dT%H:%M:%S')
                     end = datetime.datetime.strptime(end['dateTime'][:-6], '%Y-%m-%dT%H:%M:%S')
 
+                #イベントにcolorIdがあればカレンダーのcolorを更新
+                colorId_event = event.get('colorId', None)
+                if colorId_event:
+                    fg_event = color_dict['event'][colorId_event]['foreground']
+                    bg_event = color_dict['event'][colorId_event]['background']
+                else:
+                    fg_event = fg_caelndar
+                    bg_event = bg_calendar
+
                 event_info = {"title": event.get("summary", None), 
                     "start": start, 
                     "end": end, 
                     "id": event.get("id", None),
-                    "colorId": event.get("colorId", None),
+                    'fg_color': fg_event,
+                    'bg_color': bg_event,
                     "calendarId": calendarId
                 }
                 events_info.append(event_info)
@@ -106,14 +119,8 @@ class Calendar:
                             right = event_width * (end_index + 1)
                             top = event_height * (4 + (config.event_num + 1) * i + j)
                             bottom = event_height * (4 + (config.event_num + 1) * i + j + 1)
-                            if event_info["colorId"] != None:
-                                color_bg = calendar_variance.color_dict["event"][event_info["colorId"]]["background"]
-                                color_fg = calendar_variance.color_dict["event"][event_info["colorId"]]["foreground"]
-                            else:
-                                color_bg = calendar_variance.color_dict["event"]['1']["background"]
-                                color_fg = calendar_variance.color_dict["event"]['1']["foreground"]
 
-                            color_bg_RGBA = colorcode2RGB(color_bg)
+                            color_bg_RGBA = colorcode2RGB(event_info['bg_color'])
                             color_bg_RGBA.append(config.alpha)
                             yuv = color_bg_RGBA[0] * 0.299 + color_bg_RGBA[1] * 0.587 + color_bg_RGBA[2] * 0.114
                             if yuv > 140:
