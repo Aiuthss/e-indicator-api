@@ -60,6 +60,7 @@ def bg_draw(config):
     else:
         print('invalid background format specified')
         img = img.resize((config.width, config.height))
+    img = img.convert('RGB')
     return img
 
 def save_bg_img(creds, albumIds=None, baseUrl=None):
