@@ -72,7 +72,7 @@ def save_bg_img(creds, albumIds=None, baseUrl=None):
 
         mediaItem_list = []
         for albumId in albumIds:
-            body = {'albumId': albumId}
+            body = {'albumId': albumId, 'pageSize': 100}
             x = service.mediaItems().search(body=body).execute().get('mediaItems', None)
             mediaItem_list = mediaItem_list + x
         baseUrls = [i['baseUrl'] for i in mediaItem_list if 'photo' in i['mediaMetadata'].keys()]
