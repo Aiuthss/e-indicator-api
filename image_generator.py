@@ -27,6 +27,7 @@ def quantize(image):
 def bg_draw(config):
     if config.bg_src == 'Google_Photo':
         img = Image.open('background.bmp')
+        img = img.convert('RGBA')
     else:
         img = Image.new('RGBA', (config.width, config.height), 'white')
 
@@ -60,7 +61,6 @@ def bg_draw(config):
     else:
         print('invalid background format specified')
         img = img.resize((config.width, config.height))
-    img = img.convert('RGB')
     return img
 
 def save_bg_img(creds, albumIds=None, baseUrl=None):
