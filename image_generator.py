@@ -72,9 +72,14 @@ def save_bg_img(creds, albumIds=None, baseUrl=None):
 
         mediaItem_list = []
         for albumId in albumIds:
-            body = {'albumId': albumId, 'pageSize': 100}
-            x = service.mediaItems().search(body=body).execute().get('mediaItems', None)
-            mediaItem_list = mediaItem_list + x
+            pageToken = None
+            while True:
+                body = {'albumId': albumId, 'pageSize': 100, 'pageToken': pageToken}
+                x = service.mediaItems().search(body=body).execute()
+                mediaItem_list = mediaItem_list + x.get('mediaItems', None)
+                pageToken = x.get('nextPageToken', None)
+                if not pageToken:
+                    break
         baseUrls = [i['baseUrl'] for i in mediaItem_list if 'photo' in i['mediaMetadata'].keys()]
         baseUrl = random.choice(baseUrls)
 
