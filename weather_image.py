@@ -3,6 +3,9 @@ import json
 from PIL import Image, ImageDraw, ImageFont
 import cairosvg
 import os
+import re
+import weatherCodes
+import datetime
 
 class Weather:
     weatherCodes = None
@@ -84,9 +87,8 @@ class Weather:
 
         x_icon = config.width / len(self.weatherCodes) / 2 - config.icon_width / 2
         y_icon = y_temp + y_stroke
-        for i in self.weatherCodes.values():
-            pngname = 'icon/' + i + '.png'
-            icon = Image.open(pngname)
+        for i in self.icon:
+            icon = Image.open(i)
             icon = icon.resize((config.icon_width, config.icon_height))
             img.paste(icon, (int(x_icon), int(y_icon)), icon)
             x_icon += x_stroke
@@ -100,16 +102,23 @@ class Weather:
 
     def download_icon(self):
         os.makedirs('icon', exist_ok=True)
-        for i in self.weatherCodes.values():
-            svgname = 'icon/' + i + '.svg'
-            pngname = 'icon/' + i + '.png'
+        self.icon = []
+        for i, weatherCode in enumerate(self.weatherCodes.values()):
+            dt_now = datetime.datetime.now()
+            if dt_now.hour >= 17 and i == 0:
+                svg = weatherCodes.weatherCodes_dict[int(weatherCode)][1]
+            else:
+                svg = weatherCodes.weatherCodes_dict[int(weatherCode)][0]
+            svg_to = 'icon/' + svg
+            png_to = 'icon/' + svg.replace('.svg', '.png')
+            self.icon.append(png_to)
             try:
-                url = 'https://www.jma.go.jp/bosai/forecast/img/' + i + '.svg'
-                request.urlretrieve(url, svgname)
-                cairosvg.svg2png(url=svgname, write_to=pngname)
+                url = 'https://www.jma.go.jp/bosai/forecast/img/' + svg
+                request.urlretrieve(url, svg_to)
+                cairosvg.svg2png(url=svg_to, write_to=png_to)
             except:
                 img_error = Image.new('RGBA', (80, 60))
-                img_error.save(pngname)
+                img_error.save(png_to)
 
 def run(weatherconf):
     weather_now = Weather()
