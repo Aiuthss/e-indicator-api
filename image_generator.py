@@ -4,7 +4,7 @@ import tasks_image
 import config
 import random
 import requests
-from PIL import Image
+from PIL import Image, ImageDraw
 import logging
 from googleapiclient.discovery import build
 
@@ -99,5 +99,7 @@ def run(config_file):
         elif i == 'tasks':
             tasks_img = tasks_image.run(conf.tasks, conf.google.creds)
             img.paste(tasks_img, (conf.tasks.x, conf.tasks.y), tasks_img)
+    draw = ImageDraw.Draw(img)
+    draw.rectangle([(0, 0), (conf.general.width - 1, conf.general.height - 1)], fill=None, outline='black')
     img = quantize(img)
     return img

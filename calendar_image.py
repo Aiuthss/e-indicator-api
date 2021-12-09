@@ -73,7 +73,7 @@ class Calendar:
         img.putalpha(config.alpha)
         draw = ImageDraw.Draw(img)
 
-        draw.rectangle([(0, 0), (config.width - 1, config.height - 1)], fill=None, outline='black')
+        draw.rectangle([(0, 0), (config.width, config.height)], fill=None, outline='black')
         font = ImageFont.truetype('fonts/Lovelo-LineBold.otf', config.fontsize * 3)
         draw.text((config.width / 2, event_height), self.today.strftime('%B'), anchor='mm', font=font, fill='black')
         draw.line([(0, event_height * 2), (config.width, event_height * 2)], fill = 'black')
